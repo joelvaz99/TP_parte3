@@ -7,9 +7,12 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import ipvc.estg.tp_parte3.dao.NotaDao
 import ipvc.estg.tp_parte3.entities.Nota
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 
-@Database(entities = arrayOf(Nota::class), version = 1, exportSchema = false)
+
+@Database(entities = arrayOf(Nota::class), version = 6, exportSchema = false)
 public abstract class NotaDB : RoomDatabase() {
 
     abstract fun notaDao(): NotaDao
@@ -23,6 +26,14 @@ public abstract class NotaDB : RoomDatabase() {
             INSTANCE?.let { database ->
                 scope.launch {
                     var notaDao=database.notaDao()
+
+
+                        // Colocar duas cidades de Inicio
+                        var nota = Nota(1, titular = "Joel", nota = "10" )
+                    notaDao.insert(nota)
+
+                    nota = Nota(2, titular = "Ana", nota = "12" )
+                    notaDao.insert(nota)
 
 
                 }
