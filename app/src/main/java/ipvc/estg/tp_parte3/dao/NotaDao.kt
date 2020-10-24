@@ -12,7 +12,7 @@ interface NotaDao {
 
     //Inserir
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(nota: Nota)
+    suspend fun insert(nota: Nota) // Vai ser Chamado no Repositorio
 
     //Selecionar tudo
     @Query("SELECT * from nota_table ORDER BY titular ASC")

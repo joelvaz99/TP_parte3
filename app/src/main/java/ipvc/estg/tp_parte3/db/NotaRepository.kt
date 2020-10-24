@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import ipvc.estg.tp_parte3.dao.NotaDao
 import ipvc.estg.tp_parte3.entities.Nota
 
-
+//Vai Chamar o metodo correspondente no DAO
 class NotaRepository(private val notaDao: NotaDao) {
 
     //Listar

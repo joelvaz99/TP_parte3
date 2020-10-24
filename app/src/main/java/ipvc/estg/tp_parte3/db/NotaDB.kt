@@ -10,11 +10,12 @@ import ipvc.estg.tp_parte3.entities.Nota
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+//Criacao da base de dados
 
-
-@Database(entities = arrayOf(Nota::class), version = 6, exportSchema = false)
+@Database(entities = arrayOf(Nota::class), version = 3, exportSchema = false)
 public abstract class NotaDB : RoomDatabase() {
 
+    //
     abstract fun notaDao(): NotaDao
 
     private class WordDatabaseCallback(
@@ -30,9 +31,9 @@ public abstract class NotaDB : RoomDatabase() {
 
                         // Colocar duas cidades de Inicio
                         var nota = Nota(1, titular = "Joel", nota = "10" )
-                    notaDao.insert(nota)
+                        notaDao.insert(nota)
 
-                    nota = Nota(2, titular = "Ana", nota = "12" )
+                         nota = Nota(2, titular = "Ana", nota = "12" )
                     notaDao.insert(nota)
 
 
@@ -43,11 +44,10 @@ public abstract class NotaDB : RoomDatabase() {
 
 
     companion object {
-        // Singleton prevents multiple instances of database opening at the
-        // same time.
+
         @Volatile
         private var INSTANCE: NotaDB? = null
-
+        //
         fun getDatabase(context: Context, scope: CoroutineScope): NotaDB {
             val tempInstance = INSTANCE
             if (tempInstance != null) {
@@ -57,7 +57,7 @@ public abstract class NotaDB : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     NotaDB::class.java,
-                    "notas_database"
+                    "notas_database"//nome da base de dados
                 )
 
                     //estrategia destruicao
