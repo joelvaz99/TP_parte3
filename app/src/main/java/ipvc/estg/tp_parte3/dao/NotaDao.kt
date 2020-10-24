@@ -10,7 +10,7 @@ import ipvc.estg.tp_parte3.entities.Nota
 @Dao
 interface NotaDao {
 
-    //Inserir
+    //Inserirefer
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(nota: Nota) // Vai ser Chamado no Repositorio
 
