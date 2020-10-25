@@ -8,7 +8,7 @@ import ipvc.estg.tp_parte3.entities.Nota
 class NotaRepository(private val notaDao: NotaDao) {
 
     //Listar
-    val allNotas: LiveData<List<Nota>> = notaDao.getAllTitular()
+    val allNotas: LiveData<List<Nota>> = notaDao.getAllNotas()
 
    // Inserir
     suspend fun insert(nota: Nota) {

@@ -9,10 +9,11 @@ import ipvc.estg.tp_parte3.dao.NotaDao
 import ipvc.estg.tp_parte3.entities.Nota
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.util.*
 
 //Criacao da base de dados
 
-@Database(entities = arrayOf(Nota::class), version = 3, exportSchema = false)
+@Database(entities = arrayOf(Nota::class), version = 4, exportSchema = false)
 public abstract class NotaDB : RoomDatabase() {
 
     //
@@ -29,11 +30,12 @@ public abstract class NotaDB : RoomDatabase() {
                     var notaDao=database.notaDao()
 
 
-                        // Colocar duas cidades de Inicio
-                        var nota = Nota(1, titular = "Joel", nota = "10" )
-                        notaDao.insert(nota)
 
-                         nota = Nota(2, titular = "Ana", nota = "12" )
+                    //Colocar duas cidades de Inicio
+                       var nota = Nota(1, titular = "Joel", nota = "Hj eu estou cansado")
+                    notaDao.insert(nota)
+
+                 nota = Nota(2, titular = "Ana", nota = "Hj eu nao estou cansado")
                     notaDao.insert(nota)
 
 
