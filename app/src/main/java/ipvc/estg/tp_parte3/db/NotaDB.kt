@@ -38,7 +38,6 @@ public abstract class NotaDB : RoomDatabase() {
                  nota = Nota(2, titular = "Ana", nota = "Hj eu nao estou cansado")
                     notaDao.insert(nota)
 
-
                 }
             }
         }
