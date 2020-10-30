@@ -1,25 +1,27 @@
 package ipvc.estg.tp_parte3
 
-
-
 import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Button
 import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
+//import ipvc.estg.tp_parte3.databinding.ActivityCarDetailsBinding
 import kotlinx.android.synthetic.main.activity_add_nota.*
 
-class AddNota : AppCompatActivity() {
-    private lateinit var editWordView: EditText
-    private lateinit var editWordView1: EditText
+class UpdateNota : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_nota)
+     //      binding = DataBindingUtil.setContentView(this, R.layout.activity_update_nota)
+        setContentView(R.layout.activity_update_nota)
 
-        editWordView = findViewById(R.id.edit_word)
-        editWordView1 = findViewById(R.id.edit_word2)
+        //edit_word.text = getIntent().getStringExtra("TITULAR")
+       // edit_word2.text = getIntent().getStringExtra("DESC")
+
+
+/*
         val button = findViewById<Button>(R.id.button_save)
         button.setOnClickListener {
             val replyIntent = Intent()
@@ -43,5 +45,10 @@ class AddNota : AppCompatActivity() {
         const val EXTRA_REPLY_DESCRICAO = "com.example.android.wordlistsq2.REPLY"
 
     }
+
+ */
+    }
 }
+
+
 

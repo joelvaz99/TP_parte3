@@ -11,7 +11,7 @@ import android.widget.Button
 import android.widget.EditText
 import kotlinx.android.synthetic.main.activity_add_nota.*
 
-class AddNota : AppCompatActivity() {
+class AddNota1 : AppCompatActivity() {
     private lateinit var editWordView: EditText
     private lateinit var editWordView1: EditText
     override fun onCreate(savedInstanceState: Bundle?) {

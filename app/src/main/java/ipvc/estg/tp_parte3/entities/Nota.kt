@@ -11,5 +11,5 @@ class Nota(
     @PrimaryKey(autoGenerate = true) val id: Int? = null,
     @ColumnInfo(name = "titular") val titular: String,
     @ColumnInfo( name = "nota") val nota: String
-
+    // adicionar data
 )

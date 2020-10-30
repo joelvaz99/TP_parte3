@@ -13,7 +13,7 @@ import java.util.*
 
 //Criacao da base de dados
 
-@Database(entities = arrayOf(Nota::class), version = 4, exportSchema = false)
+@Database(entities = arrayOf(Nota::class), version = 7, exportSchema = false)
 public abstract class NotaDB : RoomDatabase() {
 
     //
