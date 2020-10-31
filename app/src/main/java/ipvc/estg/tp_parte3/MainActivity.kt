@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,13 +19,13 @@ import ipvc.estg.tp_parte3.viewModel.NotaViewModel
 class MainActivity : AppCompatActivity(),NotaAdapter.RowClickListener  {
     private lateinit var notaViewModel: NotaViewModel
     private val newWordActivityRequestCode = 1
-
+   lateinit var binding: MainActivityBinding
     lateinit var recyclerViewAdapter: NotaAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        //binding = DataBindingUtil.setContentView(this,R.layout.activity_main)
         //recycler view
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerview)
         val adapter = NotaAdapter(this)
@@ -79,6 +80,14 @@ class MainActivity : AppCompatActivity(),NotaAdapter.RowClickListener  {
     override fun onItemClickListener(item: Nota, position: Int) {
 
        Toast.makeText(this, item.titular , Toast.LENGTH_SHORT).show()
+        val replyIntent = Intent(this@MainActivity, UpdateNota::class.java)
+        //val word = item.titular.toString()
+        //val word2 = item.nota.toString()
+        replyIntent.putExtra(EXTRA_REPLY_TITULAR, item.titular)
+        replyIntent.putExtra(EXTRA_REPLY_NOTA, item.nota)
+
+        setResult(Activity.RESULT_OK, replyIntent)
+        //finish()
         /*
        val intent = Intent(this, UpdateNota::class.java)
         intent.putExtra("TITULAR", item.titular)
@@ -89,6 +98,12 @@ class MainActivity : AppCompatActivity(),NotaAdapter.RowClickListener  {
 */
 
     }
+    companion object {
+        const val EXTRA_REPLY_TITULAR = "com.example.android.wordlistsql.REPLY"
+        const val EXTRA_REPLY_NOTA = "com.example.android.wordlistsq2.REPLY"
+
+    }
+
 
 
 }

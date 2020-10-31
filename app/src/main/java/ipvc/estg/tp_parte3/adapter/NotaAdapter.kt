@@ -29,10 +29,10 @@ class NotaAdapter internal constructor(
             deleteItemView.setOnClickListener{
                 action.onDeleteUserClickListener(item,adapterPosition)
             }
-           // itemView.setOnClickListener{
-            //    action.onItemClickListener(item,adapterPosition)
+            itemView.setOnClickListener{
+               action.onItemClickListener(item,adapterPosition)
                // action.onDeleteUserClickListener(item,adapterPosition)
-         //   }
+           }
             }
 
 

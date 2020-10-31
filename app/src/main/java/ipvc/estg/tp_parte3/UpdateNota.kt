@@ -6,18 +6,23 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import ipvc.estg.tp_parte3.entities.Nota
 //import ipvc.estg.tp_parte3.databinding.ActivityCarDetailsBinding
-import kotlinx.android.synthetic.main.activity_add_nota.*
+//import kotlinx.android.synthetic.main.activity_add_nota.*
+import kotlinx.android.synthetic.main.activity_update_nota.*
+import ipvc.estg.tp_parte3.MainActivity.Companion as MainActivity1
 
 class UpdateNota : AppCompatActivity() {
-
+    private val newWordActivityRequestCode = 1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-     //      binding = DataBindingUtil.setContentView(this, R.layout.activity_update_nota)
+         binding = DataBindingUtil.setContentView(this, R.layout.activity_update_nota)
         setContentView(R.layout.activity_update_nota)
 
-        //edit_word.text = getIntent().getStringExtra("TITULAR")
+        edit_word.text = getIntent().getStringExtra("TITULAR")
        // edit_word2.text = getIntent().getStringExtra("DESC")
 
 
@@ -48,6 +53,25 @@ class UpdateNota : AppCompatActivity() {
 
  */
     }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK) {
+            edit_word.text = data?.getExtra(MainActivity1.EXTRA_REPLY_TITULAR)
+            edit_word2.text = data?.getStringExtra(MainActivity1.EXTRA_REPLY_NOTA)
+            edit_word.text = getIntent().getStringExtra("CARNAME")
+
+            }else{
+            Toast.makeText(
+                applicationContext,
+                "Titulo ou descricao vazia",
+                Toast.LENGTH_LONG).show()
+        }
+
+        }
+
+
+
 }
 
 
