@@ -13,7 +13,7 @@ import java.util.*
 
 //Criacao da base de dados
 
-@Database(entities = arrayOf(Nota::class), version = 7, exportSchema = false)
+@Database(entities = arrayOf(Nota::class), version = 9, exportSchema = false)
 public abstract class NotaDB : RoomDatabase() {
 
     //
@@ -32,10 +32,10 @@ public abstract class NotaDB : RoomDatabase() {
 
 
                     //Colocar duas cidades de Inicio
-                       var nota = Nota(1, titular = "Joel", nota = "Hj eu estou cansado")
+                    var nota = Nota(1, titular = "Joel", nota = "Fazer trabalho pratico 2",data = "15/10/20")
                     notaDao.insert(nota)
 
-                 nota = Nota(2, titular = "Ana", nota = "Hj eu nao estou cansado")
+                    nota = Nota(2, titular = "Ana", nota = "Fazer trabalho pratico 1",data = "31/10/20")
                     notaDao.insert(nota)
 
                 }

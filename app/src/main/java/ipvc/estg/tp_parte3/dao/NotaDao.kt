@@ -1,10 +1,7 @@
 package ipvc.estg.tp_parte3.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import ipvc.estg.tp_parte3.entities.Nota
 
 @Dao
@@ -22,5 +19,11 @@ interface NotaDao {
     //Delete
     @Query("DELETE FROM nota_table WHERE titular=:titular ")
     suspend fun deleteNota(titular:String)
+
+    @Query("UPDATE nota_table SET nota=:nota WHERE titular = :titular")
+    fun updateNota(titular:String, nota: String)
+
+    @Update
+    suspend fun updateNota1(nota:Nota)
 
 }

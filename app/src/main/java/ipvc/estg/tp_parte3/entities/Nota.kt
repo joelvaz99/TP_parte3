@@ -10,6 +10,9 @@ import java.util.*
 class Nota(
     @PrimaryKey(autoGenerate = true) val id: Int? = null,
     @ColumnInfo(name = "titular") val titular: String,
-    @ColumnInfo( name = "nota") val nota: String
+    @ColumnInfo( name = "nota") val nota: String,
+    @ColumnInfo( name = "data") val data: String
     // adicionar data
-)
+) {
+
+}

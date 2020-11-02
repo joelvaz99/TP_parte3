@@ -1,12 +1,11 @@
 package ipvc.estg.tp_parte3
-
 import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
-import android.widget.ImageButton
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,17 +14,20 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ipvc.estg.tp_parte3.adapter.NotaAdapter
 import ipvc.estg.tp_parte3.entities.Nota
 import ipvc.estg.tp_parte3.viewModel.NotaViewModel
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 class MainActivity : AppCompatActivity(),NotaAdapter.RowClickListener  {
     private lateinit var notaViewModel: NotaViewModel
     private val newWordActivityRequestCode = 1
-   lateinit var binding: MainActivityBinding
+    private val newWordActivityRequestCode2 = 2
+
     lateinit var recyclerViewAdapter: NotaAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //binding = DataBindingUtil.setContentView(this,R.layout.activity_main)
         //recycler view
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerview)
         val adapter = NotaAdapter(this)
@@ -50,60 +52,52 @@ class MainActivity : AppCompatActivity(),NotaAdapter.RowClickListener  {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK) {
             val ptitulo = data?.getStringExtra(AddNota.EXTRA_REPLY_TITULO)
             val pdescricao = data?.getStringExtra(AddNota.EXTRA_REPLY_DESCRICAO)
-
+            val agora: LocalDateTime = LocalDateTime.now()
+            val formatterData = DateTimeFormatter.ofPattern("dd/MM/uuuu")
+            val dataFormatada = formatterData.format(agora)
             if (ptitulo!= null && pdescricao != null) {
-                val nota = Nota(titular = ptitulo, nota = pdescricao)
+               val nota = Nota(titular = ptitulo, nota = pdescricao,data = dataFormatada)
                 notaViewModel.insert(nota)
             }
 
-        } else {
+        }else if (requestCode == newWordActivityRequestCode2 && resultCode == Activity.RESULT_OK) {
+            val ptitulo = data?.getStringExtra(AddNota.EXTRA_REPLY_UPTITULO)
+            val pdescricao = data?.getStringExtra(AddNota.EXTRA_REPLY_UPDESCRICAO)
+
+            if (ptitulo!= null && pdescricao != null) {
+               notaViewModel.updateNota(ptitulo, pdescricao)
+            }
+        }else {
             Toast.makeText(
                 applicationContext,
                 "Titulo ou descricao vazia",
                 Toast.LENGTH_LONG).show()
         }
+
     }
-
-
 
     override fun onDeleteUserClickListener(item: Nota, position: Int) {
      notaViewModel.deleteNota(item.titular)
     }
 
 
-    override fun onItemClickListener(item: Nota, position: Int) {
+    override fun onEditUserClickListener(item: Nota, position: Int) {
+        val intent= Intent(this@MainActivity, AddNota::class.java)
+        var titulo = item.titular.toString()
+        var descricao = item.nota.toString()
+        intent.putExtra("titulo",titulo)
+        intent.putExtra("descricao",descricao)
 
-       Toast.makeText(this, item.titular , Toast.LENGTH_SHORT).show()
-        val replyIntent = Intent(this@MainActivity, UpdateNota::class.java)
-        //val word = item.titular.toString()
-        //val word2 = item.nota.toString()
-        replyIntent.putExtra(EXTRA_REPLY_TITULAR, item.titular)
-        replyIntent.putExtra(EXTRA_REPLY_NOTA, item.nota)
-
-        setResult(Activity.RESULT_OK, replyIntent)
-        //finish()
-        /*
-       val intent = Intent(this, UpdateNota::class.java)
-        intent.putExtra("TITULAR", item.titular)
-        intent.putExtra("DESC", item.nota)
-        //startActivity(intent)
-        startActivityForResult(intent, newWordActivityRequestCode)
-
-*/
+        startActivityForResult(intent,newWordActivityRequestCode2)
 
     }
-    companion object {
-        const val EXTRA_REPLY_TITULAR = "com.example.android.wordlistsql.REPLY"
-        const val EXTRA_REPLY_NOTA = "com.example.android.wordlistsq2.REPLY"
-
-    }
-
 
 
 }

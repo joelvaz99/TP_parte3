@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">TP_parte3</string>
+    <string name="app_name">Note</string>
+    <string name="Save" translatable="false">Save</string>
+    <string name="Cancel" translatable="false">Cancel</string>
+    <string name="Title" translatable="false">Title</string>
+    <string name="Description" translatable="false">Description</string>
 </resources>
