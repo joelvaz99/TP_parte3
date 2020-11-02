@@ -32,6 +32,7 @@ class NotaAdapter internal constructor(
         fun initialize(item: Nota, action:RowClickListener){
             tituloItemView.text = item.titular
             subtituloItemView.text = item.nota
+            dataItemView.text=item.data
             deleteItemView.setOnClickListener{
                 action.onDeleteUserClickListener(item,adapterPosition)
             }
@@ -54,8 +55,7 @@ override fun onBindViewHolder(holder: NotaViewHolder, position: Int) {
     val current = notas[position]
     val date = Calendar.getInstance().time
     val agora: LocalDateTime = LocalDateTime.now()
-    val formatterData =
-        DateTimeFormatter.ofPattern("dd/MM/uuuu")
+    val formatterData = DateTimeFormatter.ofPattern("dd/MM/uuuu")
     val dataFormatada = formatterData.format(agora)
 
     //holder.subtituloItemView.text = dateTimeFormat.format(date)

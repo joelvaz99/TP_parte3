@@ -23,7 +23,4 @@ interface NotaDao {
     @Query("UPDATE nota_table SET nota=:nota WHERE titular = :titular")
     fun updateNota(titular:String, nota: String)
 
-    @Update
-    suspend fun updateNota1(nota:Nota)
-
 }

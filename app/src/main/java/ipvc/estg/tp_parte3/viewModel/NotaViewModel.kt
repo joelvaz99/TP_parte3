@@ -39,9 +39,6 @@ class NotaViewModel(application: Application) : AndroidViewModel(application) {
         repository.updateNota(titular,nota)
     }
 
-    fun updateNota1(nota: Nota) = viewModelScope.launch() {
-        repository.updateNota1(nota)
-    }
 
 
 

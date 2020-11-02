@@ -23,9 +23,6 @@ class NotaRepository(private val notaDao: NotaDao) {
         notaDao.updateNota(titular,nota)
     }
 
-    suspend fun updateNota1(nota: Nota) {
-        notaDao.updateNota1(nota)
-    }
 
 
 
