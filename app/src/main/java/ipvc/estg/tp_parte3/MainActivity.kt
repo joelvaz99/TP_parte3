@@ -3,6 +3,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.widget.Button
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ipvc.estg.tp_parte3.adapter.NotaAdapter
 import ipvc.estg.tp_parte3.entities.Nota
+import ipvc.estg.tp_parte3.viewModel.Login
 import ipvc.estg.tp_parte3.viewModel.NotaViewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -47,6 +49,11 @@ class MainActivity : AppCompatActivity(),NotaAdapter.RowClickListener  {
         fab.setOnClickListener {
             val intent = Intent(this@MainActivity, AddNota::class.java)
             startActivityForResult(intent, newWordActivityRequestCode)
+        }
+        val ir_login = findViewById<Button>(R.id.ir_login)
+        ir_login.setOnClickListener {
+            val intent = Intent(this@MainActivity, Login::class.java)
+            startActivity(intent)
         }
 
 

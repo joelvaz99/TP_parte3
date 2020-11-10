@@ -34,5 +34,13 @@
         android:contentDescription="Add city"
         android:src="@drawable/ic_baseline_add_24"/>
 
+    <Button
+        android:id="@+id/ir_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        tools:layout_editor_absoluteX="142dp"
+        tools:layout_editor_absoluteY="618dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
