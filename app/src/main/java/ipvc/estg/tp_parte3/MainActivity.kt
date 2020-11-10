@@ -3,6 +3,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -13,98 +14,61 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ipvc.estg.tp_parte3.adapter.NotaAdapter
+import ipvc.estg.tp_parte3.api.EndPoints
+import ipvc.estg.tp_parte3.api.OutputPost
+import ipvc.estg.tp_parte3.api.ServiceBuilder
 import ipvc.estg.tp_parte3.entities.Nota
-import ipvc.estg.tp_parte3.viewModel.Login
 import ipvc.estg.tp_parte3.viewModel.NotaViewModel
+import kotlinx.android.synthetic.main.activity_main.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
-class MainActivity : AppCompatActivity(),NotaAdapter.RowClickListener  {
-    private lateinit var notaViewModel: NotaViewModel
-    private val newWordActivityRequestCode = 1
-    private val newWordActivityRequestCode2 = 2
-
-    lateinit var recyclerViewAdapter: NotaAdapter
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //recycler view
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerview)
-        val adapter = NotaAdapter(this)
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(this)
-
-
-        //ViewModel
-        notaViewModel = ViewModelProvider(this).get(NotaViewModel::class.java)
-        notaViewModel.allNotas.observe(this, Observer { notas ->
-            // Update the cached copy of the notas in the adapter.
-            notas?.let { adapter.setNotas(it) }
-        })
-
-        //Fab
-        val fab = findViewById<FloatingActionButton>(R.id.fab)
-        fab.setOnClickListener {
-            val intent = Intent(this@MainActivity, AddNota::class.java)
-            startActivityForResult(intent, newWordActivityRequestCode)
-        }
-        val ir_login = findViewById<Button>(R.id.ir_login)
-        ir_login.setOnClickListener {
-            val intent = Intent(this@MainActivity, Login::class.java)
+        val ir_notas = findViewById<Button>(R.id.notas)
+        ir_notas.setOnClickListener {
+            val intent = Intent(this@MainActivity, Notas::class.java)
             startActivity(intent)
         }
-
-
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    fun post(view: View) {
+        val username1 = username.text.toString().trim()
+        val password = password.text.toString().trim()
 
-        if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK) {
-            val ptitulo = data?.getStringExtra(AddNota.EXTRA_REPLY_TITULO)
-            val pdescricao = data?.getStringExtra(AddNota.EXTRA_REPLY_DESCRICAO)
-            val agora: LocalDateTime = LocalDateTime.now()
-            val formatterData = DateTimeFormatter.ofPattern("dd/MM/uuuu")
-            val dataFormatada = formatterData.format(agora)
-            if (ptitulo!= null && pdescricao != null) {
-               val nota = Nota(titular = ptitulo, nota = pdescricao,data = dataFormatada)
-                notaViewModel.insert(nota)
+        val request = ServiceBuilder.buildService(EndPoints::class.java)
+        val call = request.postTest(username1,password)
+
+        call.enqueue(object : Callback<OutputPost> {
+            override fun onResponse(call: Call<OutputPost>, response: Response<OutputPost>) {
+                if (response.isSuccessful){
+                    if(response.body()?.error == false){
+                        val c: OutputPost = response.body()!!
+                        Toast.makeText(this@MainActivity,"Username ou Palavra-passe errrado",  Toast.LENGTH_SHORT).show()
+                    }else{
+                        val intent = Intent(this@MainActivity, Mapa::class.java)
+                        startActivity(intent)
+
+                        //SharedPrefManager.getInstance(applicationContext).saveUser(response.body()?.user!!)
+
+                        val c: OutputPost = response.body()!!
+                        Toast.makeText(this@MainActivity, "Login Efectuado", Toast.LENGTH_SHORT).show()
+                    }
+
+                }
             }
 
-        }else if (requestCode == newWordActivityRequestCode2 && resultCode == Activity.RESULT_OK) {
-            val ptitulo = data?.getStringExtra(AddNota.EXTRA_REPLY_UPTITULO)
-            val pdescricao = data?.getStringExtra(AddNota.EXTRA_REPLY_UPDESCRICAO)
-
-            if (ptitulo!= null && pdescricao != null) {
-               notaViewModel.updateNota(ptitulo, pdescricao)
+            override fun onFailure(call: Call<OutputPost>, t: Throwable) {
+                Toast.makeText(this@MainActivity, "${t.message}", Toast.LENGTH_SHORT).show()
             }
-        }else {
-            Toast.makeText(
-                applicationContext,
-                "Titulo ou descricao vazia",
-                Toast.LENGTH_LONG).show()
-        }
+        })
 
     }
-
-    override fun onDeleteUserClickListener(item: Nota, position: Int) {
-     notaViewModel.deleteNota(item.titular)
-    }
-
-
-    override fun onEditUserClickListener(item: Nota, position: Int) {
-        val intent= Intent(this@MainActivity, AddNota::class.java)
-        var titulo = item.titular.toString()
-        var descricao = item.nota.toString()
-        intent.putExtra("titulo",titulo)
-        intent.putExtra("descricao",descricao)
-
-        startActivityForResult(intent,newWordActivityRequestCode2)
-
-    }
-
 
 }

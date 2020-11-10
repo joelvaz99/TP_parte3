@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ipvc.estg.tp_parte3">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,7 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".viewModel.Login"></activity>
+        <activity android:name=".Mapa"></activity>
+        <activity android:name=".Notas" />
+        <activity android:name=".viewModel.Nota" />
+        <activity android:name=".viewModel.Login" />
         <activity android:name=".AddNota" />
         <activity android:name=".MainActivity">
             <intent-filter>
