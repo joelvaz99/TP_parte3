@@ -1,5 +1,6 @@
 package ipvc.estg.tp_parte3
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -52,7 +53,13 @@ class MainActivity : AppCompatActivity() {
                         val c: OutputPost = response.body()!!
                         Toast.makeText(this@MainActivity,"Username ou Palavra-passe errrado",  Toast.LENGTH_SHORT).show()
                     }else{
+                        var token = getSharedPreferences("username", Context.MODE_PRIVATE)
                         val intent = Intent(this@MainActivity, Mapa::class.java)
+                        intent.putExtra("username",username1)
+                       var editor = token.edit()
+                        editor.putString("loginusername",username1)
+                        editor.commit()
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
 
                         //SharedPrefManager.getInstance(applicationContext).saveUser(response.body()?.user!!)
@@ -69,6 +76,15 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+    }
+    override fun onStart() {
+        super.onStart()
+        var token = getSharedPreferences("username", Context.MODE_PRIVATE)
+        if (token.getString("loginusername", " ") != " ") {
+          val intent = Intent(applicationContext, Mapa::class.java)
+               intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+               startActivity(intent)
+          }
     }
 
 }
