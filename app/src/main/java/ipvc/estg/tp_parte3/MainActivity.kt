@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
-
+12
     fun post(view: View) {
         val username1 = username.text.toString().trim()
         val password = password.text.toString().trim()
