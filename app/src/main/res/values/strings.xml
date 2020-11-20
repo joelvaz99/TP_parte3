@@ -4,4 +4,5 @@
     <string name="Cancel" translatable="false">Cancel</string>
     <string name="Title" translatable="false">Title</string>
     <string name="Description" translatable="false">Description</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

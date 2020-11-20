@@ -1,31 +1,18 @@
 package ipvc.estg.tp_parte3
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import ipvc.estg.tp_parte3.adapter.NotaAdapter
 import ipvc.estg.tp_parte3.api.EndPoints
 import ipvc.estg.tp_parte3.api.OutputPost
 import ipvc.estg.tp_parte3.api.ServiceBuilder
-import ipvc.estg.tp_parte3.entities.Nota
-import ipvc.estg.tp_parte3.viewModel.NotaViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,11 +25,12 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
-12
+    //Login
     fun post(view: View) {
         val username1 = username.text.toString().trim()
         val password = password.text.toString().trim()
 
+        //Inserir
         val request = ServiceBuilder.buildService(EndPoints::class.java)
         val call = request.postTest(username1,password)
 
@@ -54,7 +42,7 @@ class MainActivity : AppCompatActivity() {
                         Toast.makeText(this@MainActivity,"Username ou Palavra-passe errrado",  Toast.LENGTH_SHORT).show()
                     }else{
                         var token = getSharedPreferences("username", Context.MODE_PRIVATE)
-                        val intent = Intent(this@MainActivity, Mapa::class.java)
+                        val intent = Intent(this@MainActivity, MapsActivity::class.java)
                         intent.putExtra("username",username1)
                        var editor = token.edit()
                         editor.putString("loginusername",username1)
@@ -62,7 +50,6 @@ class MainActivity : AppCompatActivity() {
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
 
-                        //SharedPrefManager.getInstance(applicationContext).saveUser(response.body()?.user!!)
 
                         val c: OutputPost = response.body()!!
                         Toast.makeText(this@MainActivity, "Login Efectuado", Toast.LENGTH_SHORT).show()
@@ -77,11 +64,12 @@ class MainActivity : AppCompatActivity() {
         })
 
     }
+
     override fun onStart() {
         super.onStart()
         var token = getSharedPreferences("username", Context.MODE_PRIVATE)
         if (token.getString("loginusername", " ") != " ") {
-          val intent = Intent(applicationContext, Mapa::class.java)
+          val intent = Intent(applicationContext, MapsActivity::class.java)
                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                startActivity(intent)
           }
