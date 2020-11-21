@@ -59,6 +59,34 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
+    <EditText
+        android:id="@+id/edit_word3"
+        android:layout_width="383dp"
+        android:layout_height="67dp"
+        android:layout_below="@+id/edit_word2"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="17dp"
+        android:layout_marginTop="33dp"
+        android:layout_marginEnd="17dp"
+        android:layout_marginRight="17dp"
+        android:autofillHints=""
+        android:background="#f0f0f0"
+        android:ems="10"
+        android:hint="@string/Description"
+        android:inputType="textMultiLine"
+        android:lines="10"
+        android:maxLines="100"
+        android:minLines="10"
+        android:scrollbars="vertical"
+        android:singleLine="true"
+        app:layout_constraintBottom_toTopOf="@+id/edit_word"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/cancel_button"
         android:layout_width="120dp"
@@ -67,9 +95,9 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginTop="29dp"
-        android:layout_marginEnd="17dp"
-        android:layout_marginRight="15dp"
+        android:layout_marginTop="310dp"
+        android:layout_marginEnd="36dp"
+        android:layout_marginRight="36dp"
         android:onClick="Cancel"
         android:text="@string/Cancel"
         app:layout_constraintTop_toBottomOf="@+id/edit_word"
@@ -83,12 +111,28 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:layout_marginStart="17dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="29dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginTop="301dp"
         android:onClick="Save"
         android:text="@string/Save"
         app:layout_constraintTop_toBottomOf="@+id/edit_word"
         tools:layout_editor_absoluteX="273dp" />
+
+    <ImageView
+        android:id="@+id/image_View"
+        android:layout_width="173dp"
+        android:layout_height="121dp"
+        android:layout_below="@+id/edit_word3"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="103dp"
+        android:layout_marginLeft="103dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="136dp"
+        android:layout_marginRight="136dp"
+        app:srcCompat="@drawable/ic_baseline_image_24" />
 
 </RelativeLayout>

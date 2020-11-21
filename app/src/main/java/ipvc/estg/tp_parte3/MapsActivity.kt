@@ -6,13 +6,13 @@ import android.content.pm.PackageManager
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -31,10 +31,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var users: List<User>
+    private var latitude1: String? = null
+    private var longitude1: String? = null
+
 
     // add to implement last known location
     private lateinit var lastLocation: Location
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    //added to implement location periodic updates
+    private lateinit var locationCallback: LocationCallback
+    private lateinit var locationRequest: LocationRequest
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +76,30 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 Toast.makeText(this@MapsActivity, "${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
+
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(p0: LocationResult) {
+                super.onLocationResult(p0)
+                lastLocation = p0.lastLocation
+                var loc = LatLng(lastLocation.latitude, lastLocation.longitude)
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15.0f))
+                latitude1 = loc.latitude.toString()
+                longitude1 = loc.longitude.toString()
+                //findViewById<TextView>(R.id.txtcoordenadas).setText("Lat: " + loc.latitude + " - Long: " + loc.longitude)
+                Log.d("**** SARA", "new location received - " + loc.latitude + " -" + loc.longitude)
+
+            }
+        }
+
+        // request creation
+        createLocationRequest()
+
+    }
+    private fun createLocationRequest() {
+        locationRequest = LocationRequest()
+    // interval specifies the rate at which your app will like to receive updates.
+        locationRequest.interval = 10000
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater: MenuInflater = menuInflater
@@ -91,7 +122,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             R.id.add -> {
                 val intent = Intent(this@MapsActivity, AddProblem::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-
+                intent.putExtra("latitude",latitude1)
+                intent.putExtra("longitude",longitude1)
                 startActivity(intent)
                 true
             }
@@ -118,7 +150,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
        // val sydney = LatLng(-34.0, 151.0)
       //  mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
        // mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
-        setUpMap()
+       setUpMap()
     }
     companion object {
         // add to implement last known location
@@ -158,5 +190,26 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
         }
+    }
+    private fun startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE)
+            return
+        }
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null /* Looper */)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        fusedLocationClient.removeLocationUpdates(locationCallback)
+        Log.d("**** SARA", "onPause - removeLocationUpdates")
+    }
+    public override fun onResume() {
+        super.onResume()
+        startLocationUpdates()
+        Log.d("**** SARA", "onResume - startLocationUpdates")
     }
 }
