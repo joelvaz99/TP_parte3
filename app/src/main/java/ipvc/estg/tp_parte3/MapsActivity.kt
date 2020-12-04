@@ -36,7 +36,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     private var latitude1: String? = null
     private var longitude1: String? = null
     private var loginusername: String? = null
-    private var nome: String? = null
+    private var distancia: String? = null
     private var id: String? = null
 
 
@@ -230,6 +230,50 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 true
             }
 
+            R.id.distancia -> {
+
+                val request = ServiceBuilder.buildService(EndPoints::class.java)
+                val call = request.getPontos()
+                var position: LatLng
+                call.enqueue(object : Callback<List<User>> {
+                    override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
+
+                        if (response.isSuccessful) {
+
+                            mMap.clear()
+                            users = response.body()!!
+                            for (user in users) {
+                                val distancia=calculateDistance(lastLocation.latitude, lastLocation.longitude,
+                                    user.lat!!.toDouble(), user.longitude!!.toDouble())
+
+                                if (distancia <= 30000){
+                                    if(user.user_id == loginusername){
+                                        position = LatLng(user.lat.toString().toDouble(), user.longitude.toString().toDouble())
+                                        mMap.addMarker(MarkerOptions().position(position).title(user.descricao).snippet(user.type_id).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))).setTag(user.id.toString())
+                                    }else{
+                                        position = LatLng(user.lat.toString().toDouble(), user.longitude.toString().toDouble())
+                                        mMap.addMarker(MarkerOptions().position(position).title(user.descricao).snippet(user.type_id)).setTag(user.id.toString())
+
+                                    }
+
+                                }
+
+
+                            }
+
+                        }
+                    }
+
+                    override fun onFailure(call: Call<List<User>>, t: Throwable) {
+                        Toast.makeText(this@MapsActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+                    }
+                })
+
+
+
+                true
+            }
+
 
 
             R.id.todos ->{
@@ -401,6 +445,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         startLocationUpdates()
         Log.d("**** SARA", "onResume - startLocationUpdates")
 
+    }
+
+    fun calculateDistance(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Float {
+        val results = FloatArray(1)
+        Location.distanceBetween(lat1, lng1, lat2, lng2, results)
+        // distance in meter
+        return results[0]
     }
 
 
