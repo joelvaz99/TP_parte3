@@ -17,7 +17,7 @@ class AddNota : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_nota)
         var titulo: String? = intent.getStringExtra("titulo")
-        var desc: String? = intent.getStringExtra("descricao")
+        var desc = intent.getStringExtra("descricao")
         edit_word.setText(titulo)
         edit_word2.setText(desc)
         editWordView = findViewById(R.id.edit_word)

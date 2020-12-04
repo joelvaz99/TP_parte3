@@ -1,8 +1,12 @@
 package ipvc.estg.tp_parte3
 
+
+//import retrofit2.Response
+
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,35 +15,44 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_add_nota.*
-import kotlinx.android.synthetic.main.activity_add_nota.edit_word
+import ipvc.estg.tp_parte3.api.EndPoints
+import ipvc.estg.tp_parte3.api.OutputPost
+import ipvc.estg.tp_parte3.api.ServiceBuilder
 import kotlinx.android.synthetic.main.activity_add_nota.edit_word2
+
 import kotlinx.android.synthetic.main.activity_add_problem.*
-import okhttp3.MediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
+import kotlinx.android.synthetic.main.activity_add_problem.button_save
 import retrofit2.Call
 import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import java.io.File
 
-class AddProblem : AppCompatActivity() {
+
+class AddProblem : AppCompatActivity(){
+
+    private lateinit var imageView: ImageView
+    private lateinit var imageButton: Button
+    private lateinit var sendButton: Button
+    private var imageData: ByteArray? = null
+    private var selectedFileUri:Uri? = null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_problem)
         val ir_notas = findViewById<Button>(R.id.button_save)
-        ir_notas.setOnClickListener {
-            val intent = Intent(this@AddProblem, MapsActivity::class.java)
-            startActivity(intent)
-        }
-        var longitude: String? = intent.getStringExtra("longitude")
-        var latitude: String? = intent.getStringExtra("latitude")
-        edit_word.setText(longitude)
-        edit_word2.setText(latitude)
-        
+        ir_notas.setOnClickListener {}
+        var longitude = intent.getStringExtra("longitude")
+        var latitude = intent.getStringExtra("latitude")
+        var username = intent.getStringExtra("loginusername")
+        var id = intent.getStringExtra("id")
+        //edit_word.setText(longitude)
+        edit_word2.setText(id)
+        edit_word3.setText(id)
+
+
+
         image_View.setOnClickListener {
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Select Image")
@@ -64,6 +77,9 @@ class AddProblem : AppCompatActivity() {
                 }
 
             }
+
+
+
             builder.setNegativeButton("Camera"){
                     dialog, which -> dialog.dismiss()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
@@ -94,7 +110,54 @@ class AddProblem : AppCompatActivity() {
         }
 
 
+
+        button_save.setOnClickListener{
+
+            val descricao = edit_word2.text.toString().trim()
+            val tipo = edit_word3.text.toString().trim()
+            //Inserir
+            val request = ServiceBuilder.buildService(EndPoints::class.java)
+
+
+            val call = request.postPonto1(descricao,latitude,longitude,username,tipo)
+
+
+            call.enqueue(object : Callback<OutputPost>{
+                override fun onResponse(call: Call<OutputPost>, response: retrofit2.Response<OutputPost>) {
+
+                    if (response.isSuccessful){
+                        if(response.body()?.error == false){
+                            Toast.makeText(this@AddProblem, "Erro", Toast.LENGTH_SHORT).show()
+                        }else{
+                            val intent = Intent(this@AddProblem, MapsActivity::class.java)
+                            intent.putExtra("username",username)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+
+                        }
+
+
+                    }
+                }
+
+                override fun onFailure(call: Call<OutputPost>, t: Throwable) {
+                    Toast.makeText(this@AddProblem, "${t.message}", Toast.LENGTH_SHORT).show()
+
+                }
+            })
+        }
+
+        cancel_button.setOnClickListener {
+            val intent = Intent(this@AddProblem, MapsActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            intent.putExtra("username",username)
+            startActivity(intent)
+        }
+
+
     }
+
+
     private fun openCamera() {
         val values = ContentValues()
         values.put(MediaStore.Images.Media.TITLE, "New Picture")
@@ -132,9 +195,11 @@ class AddProblem : AppCompatActivity() {
         if (resultCode == Activity.RESULT_OK){
             if(requestCode == IMAGE_PICK_CODE){
                 image_View.setImageURI(data?.data)
+
             }
             if(requestCode == IMAGE_CAPTURE_CODE){
-                image_View.setImageURI(image_uri)
+               image_View.setImageURI(image_uri)
+
             }
 
         }
@@ -147,7 +212,6 @@ class AddProblem : AppCompatActivity() {
         private val PERMISSION_CODE = 1001;
         var image_uri: Uri? = null
     }
-
 
 
 

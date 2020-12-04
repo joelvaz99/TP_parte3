@@ -5,5 +5,6 @@ data class User(
     val descricao: String?,
     val lat: String?,
     val longitude: String?,
-    val user_id: Int
+    val user_id: String?,
+    val type_id: String?
 )

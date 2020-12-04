@@ -14,4 +14,20 @@
         android:title="add"
         app:showAsAction="always" />
 
+
+    <item
+        android:id="@+id/obras"
+        android:title="Obras"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/acidentes"
+        android:title="Acidentes"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/todos"
+        android:title="todos"
+        app:showAsAction="never" />
+
+
+
 </menu>

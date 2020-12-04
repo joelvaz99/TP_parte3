@@ -4,21 +4,21 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
-
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import ipvc.estg.tp_parte3.api.EndPoints
 import ipvc.estg.tp_parte3.api.ServiceBuilder
@@ -27,12 +27,17 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener,
+    GoogleMap.OnInfoWindowClickListener{
 
     private lateinit var mMap: GoogleMap
     private lateinit var users: List<User>
     private var latitude1: String? = null
     private var longitude1: String? = null
+    private var loginusername: String? = null
+    private var nome: String? = null
+    private var id: String? = null
 
 
     // add to implement last known location
@@ -54,6 +59,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 // initialize fusedLocationClient
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
+        var loginusername1 = intent.getStringExtra("username")
+        loginusername = loginusername1
+
         //Chamar o web service
         val request = ServiceBuilder.buildService(EndPoints::class.java)
         val call = request.getPontos()
@@ -61,12 +69,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         call.enqueue(object : Callback<List<User>> {
             override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
 
-                if (response.isSuccessful){
+                if (response.isSuccessful) {
 
-                    users=response.body()!!
-                    for(user in users){
-                        position= LatLng(user.lat.toString().toDouble(),user.longitude.toString().toDouble())
-                        mMap.addMarker(MarkerOptions().position(position).title("abc"))
+                    mMap.clear()
+                    users = response.body()!!
+                    for (user in users) {
+                        if(user.user_id == loginusername1){
+                            position = LatLng(user.lat.toString().toDouble(), user.longitude.toString().toDouble())
+                            mMap.addMarker(MarkerOptions().position(position).title(user.descricao).snippet(user.type_id).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))).setTag(user.id.toString())
+                        }else{
+                            position = LatLng(user.lat.toString().toDouble(), user.longitude.toString().toDouble())
+                            mMap.addMarker(MarkerOptions().position(position).title(user.descricao).snippet(user.type_id)).setTag(user.id.toString())
+
+                        }
+
+
                     }
 
                 }
@@ -77,16 +94,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         })
 
+
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(p0: LocationResult) {
                 super.onLocationResult(p0)
                 lastLocation = p0.lastLocation
                 var loc = LatLng(lastLocation.latitude, lastLocation.longitude)
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15.0f))
+                //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15.0f))
                 latitude1 = loc.latitude.toString()
                 longitude1 = loc.longitude.toString()
-                //findViewById<TextView>(R.id.txtcoordenadas).setText("Lat: " + loc.latitude + " - Long: " + loc.longitude)
-                Log.d("**** SARA", "new location received - " + loc.latitude + " -" + loc.longitude)
+                Log.d("**** Joel", "new location received - " + loc.latitude + " -" + loc.longitude)
+
 
             }
         }
@@ -94,18 +112,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         // request creation
         createLocationRequest()
 
+
+
     }
+
     private fun createLocationRequest() {
         locationRequest = LocationRequest()
-    // interval specifies the rate at which your app will like to receive updates.
+        // interval specifies the rate at which your app will like to receive updates.
         locationRequest.interval = 10000
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
     }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.menu, menu)
         return true
     }
+
     // Logout
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -122,11 +145,134 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             R.id.add -> {
                 val intent = Intent(this@MapsActivity, AddProblem::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                intent.putExtra("latitude",latitude1)
-                intent.putExtra("longitude",longitude1)
+                intent.putExtra("latitude", latitude1)
+                intent.putExtra("longitude", longitude1)
+                intent.putExtra("loginusername", loginusername)
                 startActivity(intent)
+
                 true
             }
+            R.id.obras ->{
+
+                //OBRAS
+                val request = ServiceBuilder.buildService(EndPoints::class.java)
+                val call = request.getPontoType(2)
+                var position: LatLng
+                call.enqueue(object : Callback<List<User>> {
+                    override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
+
+                        if (response.isSuccessful) {
+
+                            mMap.clear()
+                            users = response.body()!!
+                            for (user in users) {
+                                if(user.user_id == loginusername){
+                                    position = LatLng(user.lat.toString().toDouble(), user.longitude.toString().toDouble())
+                                    mMap.addMarker(MarkerOptions().position(position).title(user.descricao).snippet(user.id.toString()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))).setTag(user.id.toString())
+                                }else{
+                                    position = LatLng(user.lat.toString().toDouble(), user.longitude.toString().toDouble())
+                                    mMap.addMarker(MarkerOptions().position(position).title(user.descricao).snippet(user.id.toString())).setTag(user.id.toString())
+
+                                }
+
+
+                            }
+
+                        }
+                    }
+
+                    override fun onFailure(call: Call<List<User>>, t: Throwable) {
+                        Toast.makeText(this@MapsActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+                    }
+                })
+
+
+
+                true
+            }
+
+            R.id.acidentes ->{
+
+                //acidentes
+                val request = ServiceBuilder.buildService(EndPoints::class.java)
+                val call = request.getPontoType(1)
+                var position: LatLng
+                call.enqueue(object : Callback<List<User>> {
+                    override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
+
+                        if (response.isSuccessful) {
+
+                            mMap.clear()
+                            users = response.body()!!
+                            for (user in users) {
+                                if(user.user_id == loginusername){
+                                    position = LatLng(user.lat.toString().toDouble(), user.longitude.toString().toDouble())
+                                    mMap.addMarker(MarkerOptions().position(position).title(user.descricao).snippet(user.id.toString()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))).setTag(user.id.toString())
+                                }else{
+                                    position = LatLng(user.lat.toString().toDouble(), user.longitude.toString().toDouble())
+                                    mMap.addMarker(MarkerOptions().position(position).title(user.descricao).snippet(user.id.toString())).setTag(user.id.toString())
+
+                                }
+
+
+                            }
+
+                        }
+                    }
+
+                    override fun onFailure(call: Call<List<User>>, t: Throwable) {
+                        Toast.makeText(this@MapsActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+                    }
+                })
+
+
+
+                true
+            }
+
+
+
+            R.id.todos ->{
+                mMap.clear()
+
+                //Chamar o web service
+                val request = ServiceBuilder.buildService(EndPoints::class.java)
+                val call = request.getPontos()
+                var position: LatLng
+                call.enqueue(object : Callback<List<User>> {
+                    override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
+
+                        if (response.isSuccessful) {
+
+                            users = response.body()!!
+                            for (user in users) {
+                                if(user.user_id == loginusername){
+                                    position = LatLng(user.lat.toString().toDouble(), user.longitude.toString().toDouble())
+                                    mMap.addMarker(MarkerOptions().position(position).title(user.descricao).snippet(user.id.toString()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))).setTag(user.id.toString())
+                                }else{
+                                    position = LatLng(user.lat.toString().toDouble(), user.longitude.toString().toDouble())
+                                    mMap.addMarker(MarkerOptions().position(position).title(user.descricao).snippet(user.id.toString())).setTag(user.id.toString())
+
+                                }
+
+
+                            }
+
+                        }
+                    }
+
+                    override fun onFailure(call: Call<List<User>>, t: Throwable) {
+                        Toast.makeText(this@MapsActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+                    }
+                })
+
+
+
+
+
+                true
+            }
+
 
 
             else -> super.onOptionsItemSelected(item)
@@ -134,25 +280,71 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Add a marker in Sydney and move the camera
-       // val sydney = LatLng(-34.0, 151.0)
-      //  mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-       // mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
-       setUpMap()
+        setUpMap()
+
+        mMap.setOnMarkerClickListener(this);
+
+
+
     }
-    companion object {
+
+    /** Called when the user clicks a marker.  */
+    override fun onMarkerClick(marker: Marker): Boolean {
+
+        val id = marker.tag
+
+       // Toast.makeText(this@MapsActivity, "${id}", Toast.LENGTH_SHORT).show()
+        val request = ServiceBuilder.buildService(EndPoints::class.java)
+        val call = request.getPontoid(id)
+        var position: LatLng
+        call.enqueue(object : Callback<List<User>> {
+            override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
+
+                if (response.isSuccessful) {
+
+
+                    users = response.body()!!
+                    for (user in users) {
+                        if(user.user_id == loginusername){
+                            val intent = Intent(this@MapsActivity, UpdateProblem::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            intent.putExtra("descricao", user.descricao)
+                            intent.putExtra("type", user.type_id)
+                            intent.putExtra("username", loginusername)
+                            intent.putExtra("id", id.toString())
+                            startActivity(intent)
+                        }
+
+
+                    }
+
+                }
+            }
+
+            override fun onFailure(call: Call<List<User>>, t: Throwable) {
+                Toast.makeText(this@MapsActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+
+
+        return false;
+
+
+
+    }
+
+
+    override fun onInfoWindowClick(marker: Marker?) {
+        Toast.makeText(this, "Info window clicked", Toast.LENGTH_SHORT).show()
+    }
+
+
+
+        companion object {
         // add to implement last known location
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
         //added to implement location periodic updates
@@ -180,17 +372,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 if (location != null) {
                     lastLocation = location
-                    Toast.makeText(
-                        this@MapsActivity,
-                        lastLocation.toString(),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    //Toast.makeText(this@MapsActivity, lastLocation.toString(), Toast.LENGTH_SHORT).show()
                     val currentLatLng = LatLng(location.latitude, location.longitude)
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
+                    //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
                 }
             }
         }
     }
+    
     private fun startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -211,5 +400,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onResume()
         startLocationUpdates()
         Log.d("**** SARA", "onResume - startLocationUpdates")
+
     }
+
+
 }

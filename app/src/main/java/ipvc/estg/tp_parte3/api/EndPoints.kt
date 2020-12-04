@@ -1,17 +1,32 @@
 package ipvc.estg.tp_parte3.api
 
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.*
+
 
 interface EndPoints {
 
     @GET("/myslim/api/pontos")
     fun getPontos(): Call<List<User>>
 
-    @GET("/users/{id}")
-    fun getUserById(@Path("id") id: Int): Call<User>
+    @GET("myslim/api/obras/{type_id}")
+    fun getPontoType(@Path("type_id") type_id: Int): Call<List<User>>
+
+    @GET("myslim/api/ponto/{id}")
+    fun getPontoid(@Path("id") id: Any?): Call<List<User>>
+
+    @GET("myslim/api/pontodelete/{id}")
+    fun deletePontoid(@Path("id") id: Any?): Call<OutputPost>
+
+    @FormUrlEncoded
+    @POST("myslim/api/pontoupdate/{id}")
+    fun updatePonto(@Path("id") id: Any?,
+                    @Field("descricao") descricao: String?,
+                    @Field("type_id") type_id: String
+    ): Call<OutputPost>
+
+
 
     @FormUrlEncoded
     @POST("/myslim/api/userlogin/")
@@ -19,18 +34,24 @@ interface EndPoints {
         @Field("username") username: String?,
         @Field("password") password: String?): Call<OutputPost>
 
+
     @FormUrlEncoded
-    @POST("/myslim/api/addproblem/")
-    fun postProblem(
-        @Field("latitude") latitude: String?,
-        @Field("longitude") longitude: String?,
+    @POST("/myslim/api/addponto1")
+    fun postPonto1(
         @Field("descricao") descricao: String?,
-        @Field("foto") foto: String?): Call<OutputPost>
+        @Field("lat") lat: String?,
+        @Field("longitude") longitude: String?,
+        @Field("user_id") user_id:String?,
+        @Field("type_id") type_id: String
+    ): Call<OutputPost>
 
     @Multipart
-    @POST("upload")
-    fun uploadImage(
-        @Part part: MultipartBody.Part?,
-        @Part("somedata") requestBody: RequestBody?
-    ): Call<RequestBody?>?
+    @POST("myslim/api/images/")
+    fun upload(
+        @Part file: MultipartBody.Part
+    ): Call<String>
+
+
+   
+
 }
